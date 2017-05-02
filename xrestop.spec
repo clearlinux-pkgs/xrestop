@@ -4,7 +4,7 @@
 #
 Name     : xrestop
 Version  : 0.4
-Release  : 1
+Release  : 2
 URL      : http://downloads.yoctoproject.org/releases/xrestop/xrestop-0.4.tar.gz
 Source0  : http://downloads.yoctoproject.org/releases/xrestop/xrestop-0.4.tar.gz
 Summary  : No detailed summary available
