@@ -4,14 +4,15 @@
 #
 Name     : xrestop
 Version  : 0.4
-Release  : 5
+Release  : 6
 URL      : http://downloads.yoctoproject.org/releases/xrestop/xrestop-0.4.tar.gz
 Source0  : http://downloads.yoctoproject.org/releases/xrestop/xrestop-0.4.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : GPL-2.0
-Requires: xrestop-bin
-Requires: xrestop-doc
+Requires: xrestop-bin = %{version}-%{release}
+Requires: xrestop-license = %{version}-%{release}
+Requires: xrestop-man = %{version}-%{release}
 BuildRequires : ncurses-dev
 BuildRequires : pkgconfig(ncurses)
 BuildRequires : pkgconfig(x11)
@@ -25,36 +26,61 @@ It requires the XRes extension.
 %package bin
 Summary: bin components for the xrestop package.
 Group: Binaries
+Requires: xrestop-license = %{version}-%{release}
 
 %description bin
 bin components for the xrestop package.
 
 
-%package doc
-Summary: doc components for the xrestop package.
-Group: Documentation
+%package license
+Summary: license components for the xrestop package.
+Group: Default
 
-%description doc
-doc components for the xrestop package.
+%description license
+license components for the xrestop package.
+
+
+%package man
+Summary: man components for the xrestop package.
+Group: Default
+
+%description man
+man components for the xrestop package.
 
 
 %prep
 %setup -q -n xrestop-0.4
+cd %{_builddir}/xrestop-0.4
 
 %build
-export LANG=C
-%configure --disable-static
-make V=1  %{?_smp_mflags}
-
-%check
-export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
+export no_proxy=localhost,127.0.0.1,0.0.0.0
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1593110583
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+%configure --disable-static
+make  %{?_smp_mflags}
+
+%check
+export LANG=C.UTF-8
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
+export SOURCE_DATE_EPOCH=1593110583
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/xrestop
+cp %{_builddir}/xrestop-0.4/COPYING %{buildroot}/usr/share/package-licenses/xrestop/dfac199a7539a404407098a2541b9482279f690d
 %make_install
 
 %files
@@ -64,6 +90,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 /usr/bin/xrestop
 
-%files doc
-%defattr(-,root,root,-)
-%doc /usr/share/man/man1/*
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/xrestop/dfac199a7539a404407098a2541b9482279f690d
+
+%files man
+%defattr(0644,root,root,0755)
+/usr/share/man/man1/xrestop.1
